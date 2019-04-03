@@ -1,0 +1,29 @@
+.single-div {
+
+}
+.single-host {
+
+}
+.row-content {
+    word-break: break-word;
+    text-align: center;
+    padding-bottom: 10px;
+    padding-top: 10px;
+
+}
+.row-title {
+    height: 32px;
+    line-height: 32px;
+    background: #b8e2d7;
+    text-align: center;
+    margin-bottom: 5px;
+}
+.row-content .single-pvo {
+    display: inline-block;
+    padding: 5px;
+    border: 2px solid #5069bd;
+    border-radius: 15px;
+    margin: 5px;
+    cursor: pointer;
+    color: #5069bd;
+}

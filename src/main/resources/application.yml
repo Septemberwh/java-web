@@ -1,0 +1,14 @@
+server:
+  port: 9999
+
+vco:
+  register.host: 119.3.31.183:5555
+
+
+
+
+
+
+
+
+

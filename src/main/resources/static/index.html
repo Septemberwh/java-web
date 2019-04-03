@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>SDK</title>
+
+    <!-- Bootstrap core CSS -->
+    <!--<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">-->
+    <link rel="stylesheet" href="./style.css">
+
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!--<script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>-->
+    <!--<script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
+
+    <script type="text/javascript" src="common/common.js"></script>
+</head>
+
+<body>
+
+<!-- Static navbar -->
+<nav class="navbar navbar-default navbar-static-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">SDK</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="active" onclick="clickTest('pvo')"><a href="#">Pvo</a></li>
+                <li class="" onclick="clickTest('vehicle')"><a href="#">Vehicle</a></li>
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>
+
+<div class="container">
+    <div class="jumbotron">
+        <div class="row single-div" id="row"></div>
+        <div>
+            <div id="test"></div>
+            <!--<div id="test2" onclick="clickTest('test2')"></div>-->
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">PVO</h4>
+                </div>
+                <div class="modal-body" id="modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- /container -->
+
+<script type="text/javascript">
+    let clickTest = (name) => {
+        switch (name) {
+            case 'pvo':
+                $('#test').load('../common/common.html');
+                break;
+            case 'vehicle':
+                $('#test').load('../page/vehicle.html');
+                break;
+        }
+
+    };
+    //
+    var arr = [], arr2 = [], len = $('.single-div .thumbnail').length;
+    $('.single-div .thumbnail').each(function(index) {
+        arr.push($(this).height());
+        arr2.push($(this));
+        if ((index + 1) % len === 0 || index + 1 === len) {
+            var hmax = arr.sort(function(a, b) {
+                if (a < b) {
+                    return 1;
+                } else if (a > b) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            });
+            arr2.forEach(function(v) {
+                $(v).height(hmax[0]);
+            });
+            arr.length = arr2.length = 0;
+        }
+    });
+    //
+    let clickPVO = (count, vin) => {
+        $('#myModal').modal('show');
+        let st = `<p>${vin + ': ' + count}</p>`;
+        $('#modal-body').html(st);
+    };
+    let getAllData = () => {
+        $.ajax({
+            type: 'get',
+            url: '/vco/host/vin/packet/list',
+            dataType: 'json',
+            success:function(data){
+                // data.data.push(data.data[0]);
+                // console.log(data);
+                for (let ho of data.data) {
+                    let subStr = '';
+                    for (let pvo of ho.datas) {
+                        subStr += `<div class="single-pvo" onclick="clickPVO(${pvo.count}, '${pvo.vin}')">${pvo.vin}</div>`;
+                    }
+                    let str = ` <div class="col-xs-12 col-md-3 single-host">
+                                    <div class="thumbnail ">
+                                        <div class="row-title">${ho.host.host}</div>
+                                        <div class="row-content">
+                                           ${subStr}
+                                        </div>
+                                    </div>
+                                </div>`;
+                    // $('#row').html(str);
+                    $('#row').append(str);
+                }
+            },
+            error:function(jqXHR){
+                console.log('Error: ' + jqXHR.status);
+            }
+        });
+    };
+    getAllData();
+</script>
+
+</body>
+</html>
